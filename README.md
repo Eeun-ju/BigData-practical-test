@@ -58,3 +58,14 @@ ________________________________________
     model = LogisticRegression()
     model.fit(train_x train_y)
     
+모델 정확도 
+       
+    from sklearn.metrics import precision_score, recall_score, f1_score
+    from sklearn.metrics import accuracy_score
+    
+    print("accuracy: %.2f" %accuracy_score(valid_y, pred_y))
+    print("Precision : %.3f" % precision_score(valid_y, pred_y))
+    print("Recall : %.3f" % recall_score(valid_y, pred_y))
+    print("F1 : %.3f" % f1_score(valid_y, pred_y))
+    
+    

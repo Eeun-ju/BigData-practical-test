@@ -75,4 +75,10 @@ ________________________________________
     print("Recall : %.3f" % recall_score(valid_y, pred_y))
     print("F1 : %.3f" % f1_score(valid_y, pred_y))
     
+이상치 탐지
     
+    q25, q75 = np.quantile(data,0.25), np.quantile(data,0.75)
+    cut_off = (q75- q25)*1.5 #IQR*1.5
+
+    lower = q25 - cut_off 
+    upper = q75 + cut_off

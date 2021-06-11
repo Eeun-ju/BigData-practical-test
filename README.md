@@ -1,5 +1,6 @@
 # BigData-practical-test
 빅데이터분석기사 실기 대비 공부 데이터자격시험 : https://www.dataq.or.kr/www/sub/a_07.do
+ 
 
 |주요항목|세부항목|세세항목|
 |---------|-------|-------|
@@ -11,49 +12,9 @@
 |데이터 모형 평가 작업| 구축된 모형 평가하기 | 최종 모형을 선정하기 위해 필요한 모형 평가 지표들을 잘 사용할 수 있다. <br> 선택한 평가지표를 이용하고 구축된 여러 모혀을 비교하고 선택할 수 있다. <br> 성능 향상을 위해 구축된 여러 모형을 적절하게 결합할 수 있다. |
 |데이터 모형 평가 작업| 분석결과 활용하기| 최종모형 또는 분석결과를 해석할 수 있다. <br> 최종모형 또는 분석결과를 저장할 수 있다.|
 
+________________________________________ 
 
-
-
-
-
-
-## 단답형
-+ 정형데이터 수집 방식 및 기술  
-
-|수집 방식|설명|
-|------|-----|
-|ETL| 수집 대상 데이터를 추출, 가공하여 데이터 웨어하우스 및 데이터 마트에 저장하는 기술|
-|FTP| TCP/IP 기반으로 파일을 송수신하는 응용계층 통신 프로토콜|
-|API| 솔루션 제조사 및 3rd party 소프트웨어로 제공되는 도구 시스템 간 연동을 통해 실시간으로 데이터를 송수신하는 인터페이스 기술|
-|DbtoDB| 데이터베이스 시스템 간 데이터를 동기화하거나 전송하는 기능을 제공하는 기술|
-|Rsync| 원격으로 파일과 디렉터리를 동기화하는 응용 프로그램 활용 기술|
-|Sqoop| 관계형 데이터베이스와 하둡 간 데이터 전송 기능을 제공하는 기술|
-
-+ 반정형데이터 수집 방식 및 기술
-
-|수집 방식|설명|
-|------|-----|
-|Sensing| 센서로부터 수집 및 생성된 데이터를 수집하는 기술|
-|Streaming|센서 데이터, 미디어 데이터를 실시간으로 수집하는 기술|
-|Flume| 로그 데이터를 Event와 Agent를 통해 수집하는 기술|
-|Scribe| 로그 데이터를 실시간으로 수집하는 기술|
-|Chukwa| Agent와 Collector 구성을 통해 데이터를 수집하고, 하둡에 저장하는 기술 |
-
-+ 비정형데이터 수집 방식 및 기술
-
-|수집 방식|설명|
-|------|-----|
-|Crawling| 다양한 웹 사이트로부터 데이터를 수집하는 기술|
-|RSS| XML 기반으로 정보를 배포하는 프로토콜을 활용하여 데이터를 수집하는 기술|
-|Open API| 공개된 API를 이용하여 데이터를 수집하는 기술|
-|Scrapy| 파이썬 언어 기반으로 크롤링하여 데이터를 수집하는 기술|
-|Apache Kafka| 대용량 실시간 로그 처리를 위한 분산 스트리밍 플랫폼 기술 |
-
-
-
-________________________________________
-## 간편한 코드
-
+데이터 변환
 
     union_data['주구매지점'].astype("category") # 카테고리 내용 확인 코드
     OneHot_지점 = pd.get_dummies(X_train['주구매지점']) #문자형 -> oneHot 바로 해주는 코드 
@@ -76,9 +37,88 @@ ________________________________________
     print("F1 : %.3f" % f1_score(valid_y, pred_y))
     
 이상치 탐지
-    
+ 
+
     q25, q75 = np.quantile(data,0.25), np.quantile(data,0.75)
     cut_off = (q75- q25)*1.5 #IQR*1.5
 
     lower = q25 - cut_off 
-    upper = q75 + cut_off
+    upper = q75 + cut_off   
+    
+    lower_list = data[data<lower].index.tolist()
+	upper_list = data[data>upper].index.tolist()
+
+
+
+
+## 예제 
+
+작업형2번
+
+    import pandas as pd
+    import numpy as np
+    
+    x_test = pd.read_csv('data/X_test.csv', index_col = 0)
+    x_train = pd.read_csv('data/X_train.csv',index_col = 0)
+    y_train = pd.read_csv('data/y_train.csv',index_col = 0)
+    
+    #데이터 확인
+    print(x_train.head())
+    print(x_train.columns)
+    
+    #결측치 확인
+    print(x_train.isnull().sum()) #결측치 존재 col 찾기 -> 65% 결측 : feature 삭제하기
+    x_train = x_train.drop('환불금액',axis = 1)
+    x_test = x_test.drop('환불금액',axis = 1)
+    
+    #범주형, 수치형 나누기 : 데이터 처리를 빠르게 하기 위한 분리
+
+    check_col = ['주구매상품','주구매지점']
+    nume_col = ['총구매액','최대구매액','내점일수','내점당구매건수','주말방문비율','구매주기']
+    cate_train = x_train[check_col]
+    nume_train = x_train[nume_col]
+    
+    #이상치 확인 -> 시각화가 불가능 하므로 이상치 개수가 전체의 10%가 넘지 않는 경우만 upper, lower로 대체
+    #나머지는 스케일로 변환
+    OneHot_train = pd.get_dummies(x_train[check_col])
+    OneHot_test = pd.get_dummies(x_test[check_col])
+
+    x_train = pd.concat([x_train,OneHot_train],axis = 1)
+    x_train = x_train.drop(check_col,axis = 1)
+    x_train = x_train.drop('주구매상품_소형가전',axis = 1)
+
+    x_test = pd.concat([x_test,OneHot_test],axis = 1)
+    x_test = x_test.drop(check_col,axis = 1)
+
+    log_list = ['총구매액', '최대구매액', '내점일수', '내점당구매건수','구매주기']
+
+    from sklearn.preprocessing import RobustScaler
+    robustScaler = RobustScaler()
+    x_train[log_list] = robustScaler.fit_transform(x_train[log_list])
+    x_test[log_list] = robustScaler.fit_transform(x_test[log_list])
+    #print(nume_train)
+
+    from sklearn import svm
+    from sklearn.model_selection import train_test_split
+
+
+    train_x, valid_x, train_y, valid_y = train_test_split(x_train,y_train,test_size=0.3,shuffle=True,random_state=25)
+    #print(train_y.values.ravel().shape)
+    model = svm.SVC(kernel = 'rbf', C = 10.0, probability = True)
+    model.fit(train_x,train_y.values.ravel())
+    #print(model.score(train_x,train_y.values.ravel()))
+    #print(model.score(valid_x,valid_y.values.ravel()))
+
+
+    final_model = svm.SVC(kernel = 'rbf', C = 10.0, probability = True)
+    final_model.fit(x_train, y_train.values.ravel())
+    pred = final_model.predict_proba(x_test)
+    #print(pred)
+    result = pd.DataFrame(pred,index=x_test.index)
+    result = result.drop(0,axis = 1)
+    result.rename(columns={1:'gender'},inplace=True)
+    result.index.name = 'custid'
+    result.to_csv('수험번호.csv')
+     
+    
+

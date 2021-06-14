@@ -48,6 +48,16 @@ ________________________________________
     lower_list = data[data<lower].index.tolist()
 	upper_list = data[data>upper].index.tolist()
 
+회귀 평가 지표
+ 
+
+    from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error, mean_squared_log_error
+    
+    pred = model1.predict(x_test)
+    MAE =  mean_absolute_error(y_test, pred)
+    MSE = mean_squared_error(y_test, pred)
+    RMSE = np.sqrt(MSE)
+    R2 = r2_score(y_test, pred)
 
 
 

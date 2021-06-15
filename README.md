@@ -19,7 +19,11 @@ ________________________________________
     union_data['주구매지점'].astype("category") # 카테고리 내용 확인 코드
     OneHot_지점 = pd.get_dummies(X_train['주구매지점']) #문자형 -> oneHot 바로 해주는 코드 
     
-    
+ 데이터 split
+ 	
+	from sklearn.model_selection import train_test_split
+ 	x_train, x_test, y_train, y_test = train_test_split(data,target,test_size = 0.4,stratify = target)
+	
  분류 모델
     
     from sklearn.linear_model import LogisticRegression #Logistic Regression 모듈

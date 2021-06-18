@@ -63,7 +63,24 @@ ________________________________________
     RMSE = np.sqrt(MSE)
     R2 = r2_score(y_test, pred)
 
+Python t-test 
 
+
+    from scipy import stats
+    
+    # one sample
+    t, p = stats.ttest_1samp(data, mu)
+    
+    # two samples
+    
+    # step 1
+    # levene 등분산 검정
+    f,p = stats.levene(data1, data2)
+    
+    # step 2
+    # 독립 t 검정
+    t, p = stats.ttest_ind(data1, data2, equal_var = True(or False))
+   
 
 ## 예제 
 
